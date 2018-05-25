@@ -40,7 +40,6 @@ class Obstacle():
 			self.x = random.randint(130, 850)
 			self.y = (random.randint(50, 300)) * -1
 			player.score += 1
-			print(player.score)
 		else:
 			self.y += self.speed
 

@@ -15,6 +15,7 @@ class Text():
 		pygame.font.init()
 		self.LoadFonts()
 		self.screenWidth = 1000
+		self.screenHeight = 800
 
 	def LoadFonts(self):
 		self.mainHeading = pygame.font.Font("fonts/planetbe.ttf", 70)
@@ -24,8 +25,12 @@ class Text():
 		self.scoreText.set_bold(True)
 		self.mainButText = pygame.font.Font("fonts/Life is goofy.ttf", 100)
 		self.buttonText = pygame.font.Font("fonts/Life is goofy.ttf", 60)
+		self.aiButton = pygame.font.Font("fonts/Life is goofy.ttf", 80)
 		self.dead = pygame.font.Font("fonts/Fiendish.ttf", 60)
 		self.lvlDisplay = pygame.font.Font("fonts/Blazed.ttf", 100)
+		self.ready = pygame.font.Font("fonts/data-latin.ttf", 120)
+		self.set = pygame.font.Font("fonts/data-latin.ttf", 120)
+		self.go = pygame.font.Font("fonts/data-latin.ttf", 120)
 
 	def MainMenu(self):
 		# Get the text
@@ -58,8 +63,7 @@ class Text():
 		t5 = self.genText.render('Every time you drive past a monster or obstacle, you get one point.', 1, COLORS['BLACK'])
 		t6 = self.genText.render('After a certain score is reached, the game will stop and you will', 1, COLORS['BLACK'])
 		t7 = self.genText.render('advance to the next level of the game.', 1, COLORS['BLACK'])
-		t8 = self.genText.render('The game then continues at a faster speed, making it harder to play.', 1, COLORS['BLACK'])
-		t9 = self.genText.render('Have fun playing!!! :-)', 1, COLORS['BLACK'])
+		t8 = self.genText.render('Have fun playing!!! :-)', 1, COLORS['BLACK'])
 		b1 = self.buttonText.render('<-- Back', 1, COLORS['WHITE'])
 
 		self.screen.blit(tHeading, (self.screenWidth/2 - tHeadingWidth/2, 15))
@@ -70,20 +74,45 @@ class Text():
 		self.screen.blit(t5, (10, 310))
 		self.screen.blit(t6, (10, 350))
 		self.screen.blit(t7, (10, 390))
-		self.screen.blit(t8, (10, 430))
-		self.screen.blit(t9, (10, 470))
+		self.screen.blit(t8, (10, 470))
 		self.screen.blit(b1, (45, 720))
 
 	def AIText(self):
-		aiHeading = self.headings.render('Option not available yet...', 1, COLORS['BLUE'])
-		button = self.buttonText.render('<-- Back', 1, COLORS['WHITE'])
+		aiHeading = self.mainHeading.render('Select an AI Mode', 1, COLORS['WHITE'])
+		backButton = self.buttonText.render('<-- Back', 1, COLORS['WHITE'])
+		distinction = self.aiButton.render('Finite State Machine', 1, COLORS['WHITE'])
+		hd = self.aiButton.render('Neural Network', 1, COLORS['WHITE'])
+
+		headWidth = aiHeading.get_width()
+		distWidth = distinction.get_width()
+		hdWidth = hd.get_width()
 		
-		self.screen.blit(aiHeading, (10, 10))
-		self.screen.blit(button, (25, 720))
+		self.screen.blit(aiHeading, (self.screenWidth/2 - headWidth/2, 60))
+		self.screen.blit(backButton, (25, 720))
+		self.screen.blit(distinction, (self.screenWidth/2 - distWidth/2, 320))
+		self.screen.blit(hd, (self.screenWidth/2 - hdWidth/2, 470))
 
 	def InGameScore(self, player):
 		cScore = self.scoreText.render('Score : %s' % player.score, 1, COLORS['RED'])
 		self.screen.blit(cScore, (25, 25))
+
+	def Ready(self):
+		ready = self.ready.render('READY', 1, COLORS['WHITE'])
+		readyWidth = ready.get_width()
+		readyHeight = ready.get_height()
+		self.screen.blit(ready, (self.screenWidth/2 - readyWidth/2, self.screenHeight/2 - readyHeight/2))
+
+	def Set(self):
+		getset = self.set.render('SET', 1, COLORS['WHITE'])
+		setWidth = getset.get_width()
+		setHeight = getset.get_height()
+		self.screen.blit(getset, (self.screenWidth/2 - setWidth/2, self.screenHeight/2 - setHeight/2))
+
+	def Go(self):
+		go = self.go.render('GO', 1, COLORS['WHITE'])
+		goWidth = go.get_width()
+		goHeight = go.get_height()
+		self.screen.blit(go, (self.screenWidth/2 - goWidth/2, self.screenHeight/2 - goHeight/2))
 
 	def FinalScore(self, player):
 		m1 = self.dead.render('You Died', 1, COLORS['RED'])

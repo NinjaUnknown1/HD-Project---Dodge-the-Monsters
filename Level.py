@@ -5,6 +5,7 @@ class Level():
 	def __init__(self, screen, player):
 		self.screen = screen
 		self.player = player
+		self.level = None
 		self.LoadImages()
 
 	def LoadImages(self):
@@ -13,16 +14,20 @@ class Level():
 		self.level3 = pygame.image.load("images/Background_Country_Road.png").convert()
 		self.level4 = pygame.image.load("images/Background_Beach_Road.png").convert()
 
-	def GetLevel(self):
+	def GetLevel(self, monList):
 		# The First Level
-		if self.player.score <= 10:
+		if self.player.score <= 50:
 			background = self.level1
-		elif self.player.score > 10 and self.player.score <= 20:
+			self.level = 1
+		elif self.player.score > 50 and self.player.score <= 100:
 			background = self.level2
-		elif self.player.score > 20 and self.player.score <= 30:
+			self.level = 2
+		elif self.player.score > 100 and self.player.score <= 150:
 			background = self.level3
-		elif self.player.score > 30:
+			self.level = 3
+		elif self.player.score > 150:
 			background = self.level4
+			self.level = 4
 		else:
 			background = self.level1
 			print('Error in determining level. Loading Level 1')

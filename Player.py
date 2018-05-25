@@ -43,6 +43,7 @@ class Player():
 		elif self.type == 'HUMAN':
 			self.image = pygame.image.load("images/HUMAN_" + self.direction + ".png")
 		else:
+			self.image = pygame.image.load("images/HUMAN_" + self.direction + ".png")
 			print('Error in player type...')
 		self.playerSprite.image = self.image
 		screen.blit(self.playerSprite.image, self.MyImage())
@@ -50,3 +51,5 @@ class Player():
 	def MyImage(self):
 		self.playerSprite.rect = self.image.get_rect(x=self.x, y=self.y, w=self.width, h=self.height)
 		return self.playerSprite.rect
+
+	

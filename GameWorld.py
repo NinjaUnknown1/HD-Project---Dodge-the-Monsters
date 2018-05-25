@@ -7,13 +7,15 @@ from Menus import Menus
 from Level import Level
 from Obstacles import Obstacle
 from Text import Text
+from FSM import FiniteStateMachine
+from CollisionChecker import CollisionChecker
 
 # Set a specific location for the window to open
 windowX = 20
 windowY = 50
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (windowX, windowY)
 
-pygame.init()
+#pygame.init()
 
 class World():
 	# Initialisation
@@ -28,6 +30,7 @@ class World():
 		self.fps = 120
 		self.obstacleSprites = []
 		self.obList = []
+		self.collision = CollisionChecker()
 
 	def RunningStatus(self):
 		if self.state == 'Quit':
@@ -52,10 +55,13 @@ class World():
 			self.menu.TutorialMenu(self.screen)
 		elif self.state == 'PlayGameAI':
 			self.menu.HighScoresMenu(self.screen)
+			self.player = Player('AI')
+			self.fsm = FiniteStateMachine(self)
+			self.fsm.RunGameFSM()
 		elif self.state == 'PlayGameHuman':
 			self.player = Player('HUMAN')
 			self.level = Level(self.screen, self.player)
-			self.RunGame()
+			self.RunGameHuman()
 
 	def DetermineGameState(self):
 		self.state = self.menu.GetState()
@@ -65,48 +71,39 @@ class World():
 
 	# Handles the left and right movement of the player
 	def HandlePlayerMovement(self):
-		if pygame.key.get_pressed()[pygame.K_LEFT]:
-			self.player.MoveLeft()
-		if pygame.key.get_pressed()[pygame.K_RIGHT]:
-			self.player.MoveRight()
-		if not pygame.key.get_pressed()[pygame.K_LEFT] and not pygame.key.get_pressed()[pygame.K_RIGHT]:
-			self.player.ReturnStraight()
+		if self.player.type == 'HUMAN':
+			if pygame.key.get_pressed()[pygame.K_LEFT]:
+				self.player.MoveLeft()
+			if pygame.key.get_pressed()[pygame.K_RIGHT]:
+				self.player.MoveRight()
+			if not pygame.key.get_pressed()[pygame.K_LEFT] and not pygame.key.get_pressed()[pygame.K_RIGHT]:
+				self.player.ReturnStraight()
 
 	def GetSprites(self):
 		self.allObstacles = pygame.sprite.Group()
 		for o in self.obList:
 			self.allObstacles.add(o.oSprite)
 
-
-	def CheckCollision(self):
-		# for o in self.obList:
-		# 	collision = o.MyImage().colliderect(self.player.MyImage())
-		# 	if collision == True:
-		# 		return True
-		# return False
-
-		# Set Masks for collision
-		self.player.playerSprite.mask = pygame.mask.from_surface(self.player.playerSprite.image)
-		obstacleMask = []
-		for o in self.obList:
-			o.oSprite.mask = pygame.mask.from_surface(o.oSprite.image)
-		
-		for o in self.obList:
-			if pygame.sprite.collide_mask(self.player.playerSprite, o.oSprite) != None:
-				#print('Collision')
-				return True
+	def AddObstacle(self):
+		if self.level.level == 2 and len(self.obList) == 4:
+			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300))))
+		elif self.level.level == 3 and len(self.obList) == 5:
+			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300))))
+		elif self.level.level == 4 and len(self.obList) == 6:
+			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300))))
 
 
-	def RunGame(self):
+	def RunGameHuman(self):
 		self.LoadObstacles()
 		self.GetSprites()
 		self.player.DrawPlayer(self.screen)
 		for o in self.obList:
 			o.DrawObstacle(self.screen)
-		while self.playing and not self.CheckCollision():
-			self.screen.fill((255,255,255))
+		self.menu.StartGame(self.screen)
+		while self.playing and not self.collision.CheckCollision(self.obList, self.player):
 			# Get the current Level
-			self.level.GetLevel()
+			self.level.GetLevel(self.obList)
+			self.AddObstacle()
 
 			# Checks to see if the user quit
 			for event in pygame.event.get():
@@ -117,7 +114,6 @@ class World():
 			# Player Movement and Drawing
 			self.HandlePlayerMovement()
 			self.player.DrawPlayer(self.screen)
-
 			
 			# Handles Movement and Drawing of Obstalces	
 			for o in self.obList:
@@ -127,6 +123,7 @@ class World():
 			self.text.InGameScore(self.player)
 			# Refresh Rate
 			self.clock.tick(120)
+			# Print the FPS to the console
 			print(self.clock.get_fps())
 			
 			# Update the Screen

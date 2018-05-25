@@ -4,8 +4,6 @@ import sys
 from GameWorld import World
 from Player import Player
 
-global screen
-
 if __name__ == '__main__':
 	# World Creation
 	world = World()

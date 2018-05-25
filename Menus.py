@@ -5,7 +5,10 @@ from Text import Text
 COLORS = {
 	'BLACK': (0, 0, 0),
 	'GREY' : (128, 128, 128),
-	'WHITE': (255, 255, 255)
+	'WHITE': (255, 255, 255),
+	'RED'  : (255, 0, 0),
+	'ORANGE': (255, 128, 0),
+	'GREEN' : (0, 255, 0)
 }
 
 button = Button()
@@ -16,6 +19,8 @@ class Menus():
 		self.LoadImages()
 		self.gameState = 'MainMenu'
 		self.text = Text(screen)
+		self.screenWidth = 1000
+		self.screenHeight = 800
 	# Main Menu Screen
 	def MainMenu(self, screen):
 		background = self.mm
@@ -65,14 +70,20 @@ class Menus():
 
 	# Will Start AI
 	def HighScoresMenu(self, screen):
-		background = self.hs
+		background = self.ai
 		screen.blit(background, (0,0))
 
 		# Draw Button
 		pygame.draw.rect(screen, COLORS['BLACK'], (10, 700, 250, 75))
 
+		# Draw AI Options
+		pygame.draw.rect(screen, COLORS['BLACK'], (200, 300, 600, 100))
+		pygame.draw.rect(screen, COLORS['BLACK'], (200, 450, 600, 100))
+
 		# Check for Hover
 		button.ButtonHover(10, 700, 250, 75, COLORS['GREY'], screen)
+		button.ButtonHover(200, 300, 600, 100, COLORS['GREY'], screen)
+		button.ButtonHover(200, 450, 600, 100, COLORS['GREY'], screen)
 
 		#DrawText
 		self.text.AIText()
@@ -86,13 +97,27 @@ class Menus():
 		self.text.FinalScore(player)
 		pygame.display.update()
 
+	def StartGame(self, screen):
+		screen.fill(COLORS['RED'])
+		self.text.Ready()
+		pygame.display.update()
+		pygame.time.delay(1000)
+		screen.fill(COLORS['ORANGE'])
+		self.text.Set()
+		pygame.display.update()
+		pygame.time.delay(1000)
+		screen.fill(COLORS['GREEN'])
+		self.text.Go()
+		pygame.display.update()
+		pygame.time.delay(1000)
+
 	def GetState(self):
 		return self.gameState
 
 	def LoadImages(self):
 		self.mm = pygame.image.load("images/Background_Blue.png")
 		self.tm = pygame.image.load("images/Background_Green.png")
-		self.hs = pygame.image.load("images/Background_Red.png")
+		self.ai = pygame.image.load("images/Background_Red.png")
 
 	def SetState(self, newState):
 		self.gameState = newState
