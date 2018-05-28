@@ -25,12 +25,11 @@ class FiniteStateMachine():
 		self.screen = world.screen
 		self.obList = [Obstacle(500,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
-		self.clock = pygame.time.Clock()
-		self.menu = Menus(self.screen)
-		self.text = Text(self.screen)
+		self.clock = world.clock
+		self.menu = world.menu
+		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)
-		self.attemptLimit = 5
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -57,12 +56,28 @@ class FiniteStateMachine():
 			return 'LEFT'
 
 	def RunGameFSM(self):
+		thisAttempt = 1
+		attemptLimit = 5
+		# Initial Game Setup
 		self.GetSprites()
 		self.player.DrawPlayer(self.screen)
 		for o in self.obList:
-			o.DrawObstacle(self.screen)
+			o.DrawObstacle(self.screen)		
 		
-		while not self.collision.CheckCollision(self.obList, self.player):
+		# While the AI still has attempts left
+		while thisAttempt <= attemptLimit:
+			# Checks for collision
+			# If one occurs then reset the game and change attempt number
+			if self.collision.CheckCollision(self.obList, self.player):
+				thisAttempt += 1
+				# Print the final score
+				print(' THE FINAL SCORE WAS: ', self.player.score)
+				self.obList = [Obstacle(500,-100)]
+				self.player.DrawPlayer(self.screen)
+				for o in self.obList:
+					o.DrawObstacle(self.screen)
+				self.player.score = 0
+
 			distances = []
 			for o in self.obList:
 				# Get the distance
@@ -105,12 +120,13 @@ class FiniteStateMachine():
 				o.Move(self.player)
 				o.DrawObstacle(self.screen)	
 
+			# Print the score to the screen
 			self.text.InGameScore(self.player)
+			# Print the attempt number to the screen
+			self.text.AttemptNumber(thisAttempt)
+			
 			# Refresh Rate
 			self.clock.tick(120)
 
 			# Update the Screen
-			pygame.display.update()
-		# Print the final score
-		print(' THE FINAL SCORE FOR ROUND 1 WAS: ', self.player.score)
-		# Set the attempt limit
+			pygame.display.update()		

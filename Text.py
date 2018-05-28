@@ -96,6 +96,10 @@ class Text():
 		cScore = self.scoreText.render('Score : %s' % player.score, 1, COLORS['RED'])
 		self.screen.blit(cScore, (25, 25))
 
+	def AttemptNumber(self, num):
+		aNum = self.scoreText.render('Attempt %s / 5' % num, 1, COLORS['RED'])
+		self.screen.blit(aNum, (25, 75))
+
 	def Ready(self):
 		ready = self.ready.render('READY', 1, COLORS['WHITE'])
 		readyWidth = ready.get_width()

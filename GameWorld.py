@@ -58,6 +58,7 @@ class World():
 			self.player = Player('AI')
 			self.fsm = FiniteStateMachine(self)
 			self.fsm.RunGameFSM()
+			self.menu.SetState('MainMenu')
 		elif self.state == 'PlayGameHuman':
 			self.player = Player('HUMAN')
 			self.level = Level(self.screen, self.player)
