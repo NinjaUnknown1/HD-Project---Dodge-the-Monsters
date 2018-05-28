@@ -7,7 +7,7 @@ class Button():
 		if mouse[0] >= x and mouse[0] <= (x+width) and mouse[1] >= y and mouse[1] <= (y+height):
 			pygame.draw.rect(screen, color, (x, y, width, height))
 
-	# Detecs when the mouse clicks on the button
+	# Detects when the mouse clicks on the button
 	def ButtonPress(self, x, y, width, height):
 		click = pygame.mouse.get_pressed()
 		mouse = pygame.mouse.get_pos()

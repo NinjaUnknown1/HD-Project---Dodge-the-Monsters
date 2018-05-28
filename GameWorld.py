@@ -15,6 +15,8 @@ windowX = 20
 windowY = 50
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (windowX, windowY)
 
+
+
 #pygame.init()
 
 class World():
@@ -53,12 +55,15 @@ class World():
 			self.menu.MainMenu(self.screen)
 		elif self.state == 'TuteMenu':
 			self.menu.TutorialMenu(self.screen)
-		elif self.state == 'PlayGameAI':
-			self.menu.HighScoresMenu(self.screen)
+		elif self.state == 'SelectAI':
+			self.menu.SelectAI(self.screen)
+		elif self.state == 'FSM':
 			self.player = Player('AI')
 			self.fsm = FiniteStateMachine(self)
 			self.fsm.RunGameFSM()
 			self.menu.SetState('MainMenu')
+		elif self.state == 'NeuralNetwork':
+			self.menu.MainMenu(self.screen)
 		elif self.state == 'PlayGameHuman':
 			self.player = Player('HUMAN')
 			self.level = Level(self.screen, self.player)

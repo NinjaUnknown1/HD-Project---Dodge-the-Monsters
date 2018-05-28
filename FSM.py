@@ -13,10 +13,8 @@ import pygame
 import sys
 from math import sqrt
 from Player import Player
-from Menus import Menus
 from Level import Level
 from Obstacles import Obstacle
-from Text import Text
 from CollisionChecker import CollisionChecker
 
 class FiniteStateMachine():
@@ -26,7 +24,6 @@ class FiniteStateMachine():
 		self.obList = [Obstacle(500,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
 		self.clock = world.clock
-		self.menu = world.menu
 		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)

@@ -43,10 +43,14 @@ class Menus():
 
 		# Check Button Presses
 		if button.ButtonPress(200, 150, 600, 100):
+			pygame.time.delay(210)
 			self.gameState = 'PlayGameHuman'
 		if button.ButtonPress(200, 300, 600, 100):
-			self.gameState = 'PlayGameAI'
+			# Time delay to stop multiple button presses from occuring
+			pygame.time.delay(210)
+			self.gameState = 'SelectAI'
 		if button.ButtonPress(200, 450, 600, 100):
+			pygame.time.delay(210)
 			self.gameState = 'TuteMenu'
 		if button.ButtonPress(200, 600, 600, 100):
 			self.gameState = 'Quit' 
@@ -66,10 +70,11 @@ class Menus():
 
 		# Check Button Presses
 		if button.ButtonPress(10, 700, 250, 75):
+			pygame.time.delay(210)
 			self.gameState = 'MainMenu'
 
 	# Will Start AI
-	def HighScoresMenu(self, screen):
+	def SelectAI(self, screen):
 		background = self.ai
 		screen.blit(background, (0,0))
 
@@ -90,7 +95,14 @@ class Menus():
 
 		# Check Button Presses
 		if button.ButtonPress(10, 700, 250, 75):
+			pygame.time.delay(210)
 			self.gameState = 'MainMenu'
+		if button.ButtonPress(200, 300, 600, 100):
+			pygame.time.delay(210)
+			self.gameState = 'FSM'
+		if button.ButtonPress(200, 450, 600, 100):
+			pygame.time.delay(210)
+			self.gameState = 'NeuralNetwork'
 
 	def EndGameScreen(self, screen, player):
 		screen.fill(COLORS['BLACK'])
