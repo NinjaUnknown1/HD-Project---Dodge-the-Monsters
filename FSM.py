@@ -21,14 +21,15 @@ class FiniteStateMachine():
 	def __init__(self, world):
 		self.world = world
 		self.screen = world.screen
-		self.obList = [Obstacle(230,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(750,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
 		self.clock = world.clock
 		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)
+		self.distanceRange = 150
 
-		self.player.x = 100
+		self.player.x = 850
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -56,17 +57,26 @@ class FiniteStateMachine():
 
 	def CheckRight(self):
 		# There will be something on the right
-		if self.player.x + (self.player.width/2) < self.obList[0].x and self.player.y - self.obList[0].y < 100:
+		if self.player.x + (self.player.width/2) < self.obList[0].x and self.player.y - self.obList[0].y < self.distanceRange:
 			print('on right')
 			return False
 		print('all clear')
 		return True
 
+	def CheckLeft(self):
+		# There will be something on the left
+		if self.player.x + (self.player.width/2) > self.obList[0].x and self.player.y - self.obList[0].y < self.distanceRange:
+			print('on left')
+			return False
+		print('all clear (l)')
+		return True
+
 	def RunGameFSM(self):
 		thisAttempt = 1
-		attemptLimit = 5
+		attemptLimit = 1
 		screenLeft = 130
 		screenRight = 900
+		screenBumper = 40
 		
 		# Initial Game Setup
 		self.GetSprites()
@@ -107,10 +117,14 @@ class FiniteStateMachine():
 			# IF its underneath the player, ignore it for the minute
 			if self.player.y < self.obList[0].y:
 				self.player.ReturnStraight()
-			elif self.player.x < screenLeft + 40 and self.CheckRight():
+			# If it is near the left side of the screen and there are no monsters in the way to the right
+			elif self.player.x < screenLeft + screenBumper and self.CheckRight():
 				self.player.MoveRight()
+			# If it is near the right side of the screen and there are no monsters in the way to the left
+			elif self.player.x + self.player.width > screenRight - screenBumper and self.CheckLeft():
+				self.player.MoveLeft()
 			# If the obstacle is close and it is near the right side of the car
-			elif distances[0] < 150 and self.WhichWayToMove() == 'LEFT':
+			elif distances[0] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
 				if self.player.x + self.player.width > self.obList[0].x - 30:
 					self.player.MoveLeft()
 				elif self.player.x + self.player.width > self.obList[0].x - 30:
@@ -118,7 +132,7 @@ class FiniteStateMachine():
 				else:
 					self.player.ReturnStraight()
 			# If the obstacle is close and it is near the right side of the car
-			elif distances[0] < 150 and self.WhichWayToMove() == 'RIGHT':
+			elif distances[0] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
 				if self.player.x < self.obList[0].x + self.obList[0].width + 30:
 					self.player.MoveRight()
 				else:
@@ -137,7 +151,7 @@ class FiniteStateMachine():
 			# Print the score to the screen
 			self.text.InGameScore(self.player)
 			# Print the attempt number to the screen
-			self.text.AttemptNumber(thisAttempt)
+			self.text.AttemptNumber(thisAttempt, attemptLimit)
 			
 			# Refresh Rate
 			self.clock.tick(120)
