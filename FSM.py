@@ -21,12 +21,14 @@ class FiniteStateMachine():
 	def __init__(self, world):
 		self.world = world
 		self.screen = world.screen
-		self.obList = [Obstacle(500,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(230,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
 		self.clock = world.clock
 		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)
+
+		self.player.x = 100
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -52,9 +54,20 @@ class FiniteStateMachine():
 			# Otherwise just move left
 			return 'LEFT'
 
+	def CheckRight(self):
+		# There will be something on the right
+		if self.player.x + (self.player.width/2) < self.obList[0].x and self.player.y - self.obList[0].y < 100:
+			print('on right')
+			return False
+		print('all clear')
+		return True
+
 	def RunGameFSM(self):
 		thisAttempt = 1
 		attemptLimit = 5
+		screenLeft = 130
+		screenRight = 900
+		
 		# Initial Game Setup
 		self.GetSprites()
 		self.player.DrawPlayer(self.screen)
@@ -70,6 +83,7 @@ class FiniteStateMachine():
 				# Print the final score
 				print(' THE FINAL SCORE WAS: ', self.player.score)
 				self.obList = [Obstacle(500,-100)]
+				self.player.x = 450
 				self.player.DrawPlayer(self.screen)
 				for o in self.obList:
 					o.DrawObstacle(self.screen)
@@ -79,8 +93,6 @@ class FiniteStateMachine():
 			for o in self.obList:
 				# Get the distance
 				distances.append(self.Distance(self.player.x, self.player.y, o.x, o.y))
-			# print(distances)
-			# print('break')
 			
 			self.level.GetLevel(self.obList)
 
@@ -91,13 +103,18 @@ class FiniteStateMachine():
 					sys.exit()	
 
 			# FSM HERE
+
 			# IF its underneath the player, ignore it for the minute
 			if self.player.y < self.obList[0].y:
 				self.player.ReturnStraight()
+			elif self.player.x < screenLeft + 40 and self.CheckRight():
+				self.player.MoveRight()
 			# If the obstacle is close and it is near the right side of the car
 			elif distances[0] < 150 and self.WhichWayToMove() == 'LEFT':
 				if self.player.x + self.player.width > self.obList[0].x - 30:
 					self.player.MoveLeft()
+				elif self.player.x + self.player.width > self.obList[0].x - 30:
+					self.player.MoveRight()
 				else:
 					self.player.ReturnStraight()
 			# If the obstacle is close and it is near the right side of the car
