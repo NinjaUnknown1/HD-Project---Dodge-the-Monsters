@@ -21,7 +21,7 @@ class FiniteStateMachine():
 	def __init__(self, world):
 		self.world = world
 		self.screen = world.screen
-		self.obList = [Obstacle(750,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(250,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
 		self.clock = world.clock
 		self.text = world.text
@@ -29,7 +29,7 @@ class FiniteStateMachine():
 		self.level = Level(self.screen, self.player)
 		self.distanceRange = 150
 
-		self.player.x = 850
+		self.player.x = 150
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -127,8 +127,6 @@ class FiniteStateMachine():
 			elif distances[0] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
 				if self.player.x + self.player.width > self.obList[0].x - 30:
 					self.player.MoveLeft()
-				elif self.player.x + self.player.width > self.obList[0].x - 30:
-					self.player.MoveRight()
 				else:
 					self.player.ReturnStraight()
 			# If the obstacle is close and it is near the right side of the car
@@ -137,6 +135,7 @@ class FiniteStateMachine():
 					self.player.MoveRight()
 				else:
 					self.player.ReturnStraight()
+			# Otherwise do nothing and return to default position (straight)
 			else:
 				self.player.ReturnStraight()
 
