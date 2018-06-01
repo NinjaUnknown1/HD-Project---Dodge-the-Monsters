@@ -57,17 +57,13 @@ class FiniteStateMachine():
 	def CheckRight(self):
 		# There will be something on the right
 		if self.player.x + (self.player.width/2) < self.obList[0].x and self.player.y - self.obList[0].y < self.distanceRange:
-			print('on right')
 			return False
-		print('all clear')
 		return True
 
 	def CheckLeft(self):
 		# There will be something on the left
 		if self.player.x + (self.player.width/2) > self.obList[0].x and self.player.y - self.obList[0].y < self.distanceRange:
-			print('on left')
 			return False
-		print('all clear (l)')
 		return True
 
 	def RunGameFSM(self):
@@ -76,6 +72,7 @@ class FiniteStateMachine():
 		screenLeft = 150
 		screenRight = 900
 		screenBumper = 40
+		file = open('Scores.txt', 'w')
 		
 		# Initial Game Setup
 		self.GetSprites()
@@ -88,27 +85,31 @@ class FiniteStateMachine():
 			# Checks for collision
 			# If one occurs then reset the game and change attempt number
 			if self.collision.CheckCollision(self.obList, self.player):
+				finalScore = 'Attempt %s had a score of %s\n' % (thisAttempt, self.player.score)
+				file.write(finalScore)
 				thisAttempt += 1
-				# Print the final score
-				print(' THE FINAL SCORE WAS: ', self.player.score)
 				self.obList = [Obstacle(450,-100, 1), Obstacle(350, -100, 2)]
 				self.player.ResetPlayer()
 				self.player.DrawPlayer(self.screen)
 				for o in self.obList:
 					o.DrawObstacle(self.screen)
 
+			# Clear the distances and sorted distances
 			distances = {}
 			sortedDistance = None
 			for o in self.obList:
 				# Get the distance
-				#distances.append(self.Distance(self.player.x, self.player.y, o.x, o.y))
 				distances[o.index] = self.Distance(self.player.x, self.player.y, o.x, o.y)
+			# Sort the distances and returned as tuple
 			sortedDistance = sorted(distances.items(), key=lambda x: x[1])
-			# Returns a tuple
-			# Tuples can be indexed like lists [0]
-			print(sortedDistance)
-			# prints the second value of tuple (distance) from the first tuple in the list (the closest thing)
-			print(sortedDistance[0][1])
+			
+			sortedObstacles = []
+			# Sort the obstacles
+			index = [i[0] for i in sortedDistance]
+			for i in index:
+				for o in self.obList:
+					if i == o.index:
+						sortedObstacles.append(o)	
 			
 			self.level.GetLevel(self.obList)
 
@@ -118,10 +119,10 @@ class FiniteStateMachine():
 					pygame.quit()
 					sys.exit()	
 
-			# FSM HERE
+			###   FSM HERE   ###
 
 			# IF its underneath the player, ignore it for the minute
-			if self.player.y < self.obList[0].y:
+			if self.player.y < sortedObstacles[0].y:
 				self.player.ReturnStraight()
 			# If it is near the left side of the screen and there are no monsters in the way to the right
 			elif self.player.x < screenLeft + screenBumper and self.CheckRight():
@@ -130,14 +131,14 @@ class FiniteStateMachine():
 			elif self.player.x + self.player.width > screenRight - screenBumper and self.CheckLeft():
 				self.player.MoveLeft()
 			# If the obstacle is close and it is near the right side of the car
-			elif distances[0] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
-				if self.player.x + self.player.width > self.obList[0].x - 30:
+			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
+				if self.player.x + self.player.width > sortedObstacles[0].x - 30:
 					self.player.MoveLeft()
 				else:
 					self.player.ReturnStraight()
 			# If the obstacle is close and it is near the right side of the car
-			elif distances[0] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
-				if self.player.x < self.obList[0].x + self.obList[0].width + 30:
+			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
+				if self.player.x < sortedObstacles[0].x + sortedObstacles[0].width + 30:
 					self.player.MoveRight()
 				else:
 					self.player.ReturnStraight()
@@ -162,4 +163,7 @@ class FiniteStateMachine():
 			self.clock.tick(120)
 
 			# Update the Screen
-			pygame.display.update()		
+			pygame.display.update()	
+
+		# Close the score text file
+		file.close()	
