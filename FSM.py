@@ -11,6 +11,7 @@ By Caitlyn Sims (100593940)
 import random
 import pygame
 import sys
+import operator
 from math import sqrt
 from Player import Player
 from Level import Level
@@ -21,15 +22,13 @@ class FiniteStateMachine():
 	def __init__(self, world):
 		self.world = world
 		self.screen = world.screen
-		self.obList = [Obstacle(250,-100)] #, Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(130,-100, 1), Obstacle(350, -100, 2)] #, Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
 		self.clock = world.clock
 		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)
 		self.distanceRange = 150
-
-		self.player.x = 150
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -73,8 +72,8 @@ class FiniteStateMachine():
 
 	def RunGameFSM(self):
 		thisAttempt = 1
-		attemptLimit = 1
-		screenLeft = 130
+		attemptLimit = 2
+		screenLeft = 150
 		screenRight = 900
 		screenBumper = 40
 		
@@ -92,17 +91,24 @@ class FiniteStateMachine():
 				thisAttempt += 1
 				# Print the final score
 				print(' THE FINAL SCORE WAS: ', self.player.score)
-				self.obList = [Obstacle(500,-100)]
-				self.player.x = 450
+				self.obList = [Obstacle(450,-100, 1), Obstacle(350, -100, 2)]
+				self.player.ResetPlayer()
 				self.player.DrawPlayer(self.screen)
 				for o in self.obList:
 					o.DrawObstacle(self.screen)
-				self.player.score = 0
 
-			distances = []
+			distances = {}
+			sortedDistance = None
 			for o in self.obList:
 				# Get the distance
-				distances.append(self.Distance(self.player.x, self.player.y, o.x, o.y))
+				#distances.append(self.Distance(self.player.x, self.player.y, o.x, o.y))
+				distances[o.index] = self.Distance(self.player.x, self.player.y, o.x, o.y)
+			sortedDistance = sorted(distances.items(), key=lambda x: x[1])
+			# Returns a tuple
+			# Tuples can be indexed like lists [0]
+			print(sortedDistance)
+			# prints the second value of tuple (distance) from the first tuple in the list (the closest thing)
+			print(sortedDistance[0][1])
 			
 			self.level.GetLevel(self.obList)
 

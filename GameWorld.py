@@ -73,7 +73,7 @@ class World():
 		self.state = self.menu.GetState()
 
 	def LoadObstacles(self):
-		self.obList = [Obstacle(130,-100), Obstacle(350, -100), Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(130,-100, 1), Obstacle(350, -100, 2), Obstacle(645, -100, 3), Obstacle(800, -100, 4)]
 
 	# Handles the left and right movement of the player
 	def HandlePlayerMovement(self):
@@ -92,11 +92,11 @@ class World():
 
 	def AddObstacle(self):
 		if self.level.level == 2 and len(self.obList) == 4:
-			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300))))
+			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300)), 5))
 		elif self.level.level == 3 and len(self.obList) == 5:
-			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300))))
+			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300)), 6))
 		elif self.level.level == 4 and len(self.obList) == 6:
-			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300))))
+			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300)), 7))
 
 
 	def RunGameHuman(self):

@@ -52,4 +52,7 @@ class Player():
 		self.playerSprite.rect = self.image.get_rect(x=self.x, y=self.y, w=self.width, h=self.height)
 		return self.playerSprite.rect
 
-	
+	def ResetPlayer(self):
+		self.x = 450
+		self.y = 700
+		self.score = 0

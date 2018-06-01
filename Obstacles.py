@@ -2,10 +2,11 @@ import pygame
 import random
 
 class Obstacle():
-	def __init__(self, x, y):
+	def __init__(self, x, y, index):
 		self.x = x
 		self.y = y
 		self.speed = 2
+		self.index = index
 
 		# Loads the images
 		imageSlime = pygame.image.load("images/Slime.png")
