@@ -18,7 +18,8 @@ class Obstacle():
 		imageList = [imageSlime, imageTroll, imageCar, imageTree]
 
 		# Randomly pick an image
-		self.image = imageList[random.randint(0,3)]
+		#self.image = imageList[random.randint(0,3)]
+		self.image = imageList[3]
 
 		# Sets width and height depending on image selected
 		if self.image == imageSlime:

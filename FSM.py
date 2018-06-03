@@ -22,13 +22,15 @@ class FiniteStateMachine():
 	def __init__(self, world):
 		self.world = world
 		self.screen = world.screen
-		self.obList = [Obstacle(130,-100, 1), Obstacle(350, -100, 2)] #, Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(530,-100, 1), Obstacle(750, -100, 2)] #, Obstacle(645, -100), Obstacle(800, -100)]
 		self.player = world.player
 		self.clock = world.clock
 		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)
-		self.distanceRange = 150
+		self.distanceRange = 250
+
+		self.player.x = 700
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -44,10 +46,10 @@ class FiniteStateMachine():
 	def WhichWayToMove(self):
 		leftside = self.player.x
 		rightside = self.player.x + self.player.width
-		monsterCentreX = self.obList[0].x + (self.obList[0].width/2)
+		monsterCentreX = self.sortedObstacles[0].x + (self.sortedObstacles[0].width/2)
 
 		# If it is closer to left side of the car
-		if self.Distance(leftside, self.player.y, monsterCentreX, self.obList[0].y) < self.Distance(rightside, self.player.y, monsterCentreX, self.obList[0].y):
+		if self.Distance(leftside, self.player.y, monsterCentreX, self.sortedObstacles[0].y) < self.Distance(rightside, self.player.y, monsterCentreX, self.sortedObstacles[0].y):
 			# Will be quicker if it moves right
 			return 'RIGHT'
 		else:
@@ -55,16 +57,30 @@ class FiniteStateMachine():
 			return 'LEFT'
 
 	def CheckRight(self):
-		# There will be something on the right
-		if self.player.x + (self.player.width/2) < self.obList[0].x and self.player.y - self.obList[0].y < self.distanceRange:
-			return False
-		return True
+		for o in self.sortedObstacles:
+			result = None
+			if result == False:
+				break
+			# There will be something on the right
+			if self.player.x + (self.player.width/2) < o.x and self.player.y - o.y < self.distanceRange:
+				result = False
+			else:
+				result = True
+
+		return result
+
 
 	def CheckLeft(self):
-		# There will be something on the left
-		if self.player.x + (self.player.width/2) > self.obList[0].x and self.player.y - self.obList[0].y < self.distanceRange:
-			return False
-		return True
+		for o in self.sortedObstacles:
+			result = None
+			if result == False:
+				break
+			# There will be something on the left
+			if self.player.x + (self.player.width/2) > o.x and self.player.y - o.y < self.distanceRange:
+				return False
+			else:
+				result = True
+		return result
 
 	def RunGameFSM(self):
 		thisAttempt = 1
@@ -103,13 +119,13 @@ class FiniteStateMachine():
 			# Sort the distances and returned as tuple
 			sortedDistance = sorted(distances.items(), key=lambda x: x[1])
 			
-			sortedObstacles = []
+			self.sortedObstacles = []
 			# Sort the obstacles
 			index = [i[0] for i in sortedDistance]
 			for i in index:
 				for o in self.obList:
 					if i == o.index:
-						sortedObstacles.append(o)	
+						self.sortedObstacles.append(o)	
 			
 			self.level.GetLevel(self.obList)
 
@@ -120,28 +136,35 @@ class FiniteStateMachine():
 					sys.exit()	
 
 			###   FSM HERE   ###
+			
+			# If the obstacle is close and it is near the right side of the car
+			if sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
+				if self.player.x + self.player.width > self.sortedObstacles[0].x - 30:
+					if self.player.x - self.sortedObstacles[1].x > 20:
+						self.player.MoveLeft()
+					else:
+						self.player.ReturnStraight()
+				else:
+					self.player.ReturnStraight()
+			
+			# If the obstacle is close and it is near the left side of the car
+			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
+				if self.player.x < self.sortedObstacles[0].x + self.sortedObstacles[0].width + 30:
+					if self.sortedObstacles[1].x - self.player.x > 20:
+						self.player.MoveRight()
+					else:
+						self.player.ReturnStraight()
+				else:
+					self.player.ReturnStraight()
 
-			# IF its underneath the player, ignore it for the minute
-			if self.player.y < sortedObstacles[0].y:
-				self.player.ReturnStraight()
 			# If it is near the left side of the screen and there are no monsters in the way to the right
 			elif self.player.x < screenLeft + screenBumper and self.CheckRight():
 				self.player.MoveRight()
+			
 			# If it is near the right side of the screen and there are no monsters in the way to the left
 			elif self.player.x + self.player.width > screenRight - screenBumper and self.CheckLeft():
 				self.player.MoveLeft()
-			# If the obstacle is close and it is near the right side of the car
-			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
-				if self.player.x + self.player.width > sortedObstacles[0].x - 30:
-					self.player.MoveLeft()
-				else:
-					self.player.ReturnStraight()
-			# If the obstacle is close and it is near the right side of the car
-			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
-				if self.player.x < sortedObstacles[0].x + sortedObstacles[0].width + 30:
-					self.player.MoveRight()
-				else:
-					self.player.ReturnStraight()
+			
 			# Otherwise do nothing and return to default position (straight)
 			else:
 				self.player.ReturnStraight()
