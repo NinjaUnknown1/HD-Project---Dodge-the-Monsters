@@ -3,9 +3,6 @@ Distinction Project
 
 This AI runs of a Finite State Machine
 
-It also has to check the position of other obstacles to ensure that while moving it won't crash
-and look 'dumb'
-
 By Caitlyn Sims (100593940)
 '''
 import random
@@ -22,15 +19,13 @@ class FiniteStateMachine():
 	def __init__(self, world):
 		self.world = world
 		self.screen = world.screen
-		self.obList = [Obstacle(530,-100, 1), Obstacle(750, -100, 2)] #, Obstacle(645, -100), Obstacle(800, -100)]
+		self.obList = [Obstacle(200,-100, 1), Obstacle(460, -100, 2), Obstacle(720, -100, 3)]
 		self.player = world.player
 		self.clock = world.clock
 		self.text = world.text
 		self.collision = CollisionChecker()
 		self.level = Level(self.screen, self.player)
 		self.distanceRange = 250
-
-		self.player.x = 700
 
 	def Distance(self, v1x, v1y, v2x, v2y):
 		''' the distance between self and v2 vector '''
@@ -57,12 +52,12 @@ class FiniteStateMachine():
 			return 'LEFT'
 
 	def CheckRight(self):
+		result = None
 		for o in self.sortedObstacles:
-			result = None
 			if result == False:
 				break
 			# There will be something on the right
-			if self.player.x + (self.player.width/2) < o.x and self.player.y - o.y < self.distanceRange:
+			if self.player.x + (self.player.width/2) < o.x and (self.player.y - o.y < self.distanceRange/2 or self.player.y < o.y):
 				result = False
 			else:
 				result = True
@@ -71,12 +66,12 @@ class FiniteStateMachine():
 
 
 	def CheckLeft(self):
+		result = None
 		for o in self.sortedObstacles:
-			result = None
 			if result == False:
 				break
 			# There will be something on the left
-			if self.player.x + (self.player.width/2) > o.x and self.player.y - o.y < self.distanceRange:
+			if self.player.x + (self.player.width/2) > o.x and (self.player.y - o.y < self.distanceRange/2 or self.player.y < o.y):
 				return False
 			else:
 				result = True
@@ -84,7 +79,7 @@ class FiniteStateMachine():
 
 	def RunGameFSM(self):
 		thisAttempt = 1
-		attemptLimit = 2
+		attemptLimit = 30
 		screenLeft = 150
 		screenRight = 900
 		screenBumper = 40
@@ -104,7 +99,7 @@ class FiniteStateMachine():
 				finalScore = 'Attempt %s had a score of %s\n' % (thisAttempt, self.player.score)
 				file.write(finalScore)
 				thisAttempt += 1
-				self.obList = [Obstacle(450,-100, 1), Obstacle(350, -100, 2)]
+				self.obList = [Obstacle(200,-100, 1), Obstacle(460, -100, 2), Obstacle(720, -100, 3)]
 				self.player.ResetPlayer()
 				self.player.DrawPlayer(self.screen)
 				for o in self.obList:
@@ -135,25 +130,25 @@ class FiniteStateMachine():
 					pygame.quit()
 					sys.exit()	
 
+			for o in self.obList:
+				if o.y + o.height > self.player.y + 45:
+					self.sortedObstacles.remove(o)
+
 			###   FSM HERE   ###
-			
+			if self.sortedObstacles	== []:
+				pass	
+
 			# If the obstacle is close and it is near the right side of the car
-			if sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
-				if self.player.x + self.player.width > self.sortedObstacles[0].x - 30:
-					if self.player.x - self.sortedObstacles[1].x > 20:
-						self.player.MoveLeft()
-					else:
-						self.player.ReturnStraight()
+			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
+				if self.player.x + self.player.width > self.sortedObstacles[0].x - 30 and self.CheckLeft():
+					self.player.MoveLeft()
 				else:
 					self.player.ReturnStraight()
-			
+
 			# If the obstacle is close and it is near the left side of the car
 			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
-				if self.player.x < self.sortedObstacles[0].x + self.sortedObstacles[0].width + 30:
-					if self.sortedObstacles[1].x - self.player.x > 20:
-						self.player.MoveRight()
-					else:
-						self.player.ReturnStraight()
+				if self.player.x < self.sortedObstacles[0].x + self.sortedObstacles[0].width + 30 and self.CheckRight():
+					self.player.MoveRight()
 				else:
 					self.player.ReturnStraight()
 
