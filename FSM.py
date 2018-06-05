@@ -53,12 +53,13 @@ class FiniteStateMachine():
 
 	def CheckRight(self):
 		result = None
-		for o in self.sortedObstacles:
+		for o in self.obList:
 			if result == False:
 				break
 			# There will be something on the right
-			if self.player.x + (self.player.width/2) < o.x and (self.player.y - o.y < self.distanceRange/2 or self.player.y < o.y):
+			if (self.player.x + self.player.width) < o.x and (self.player.x + self.player.width) - o.x < 30 and (self.player.x + self.player.width) - o.x > 0 and (self.player.y - o.y < self.distanceRange/2 or self.player.y + 20 < o.y + o.height):
 				result = False
+			# Nothing is in the way
 			else:
 				result = True
 
@@ -67,12 +68,13 @@ class FiniteStateMachine():
 
 	def CheckLeft(self):
 		result = None
-		for o in self.sortedObstacles:
+		for o in self.obList:
 			if result == False:
 				break
 			# There will be something on the left
-			if self.player.x + (self.player.width/2) > o.x and (self.player.y - o.y < self.distanceRange/2 or self.player.y < o.y):
+			if self.player.x > (o.x + o.width) and self.player.x - (o.x + o.width) < 30 and self.player.x - (o.x + o.width) > 0 and (self.player.y - o.y < self.distanceRange/2 or self.player.y + 20 < o.y + o.height):
 				return False
+			# Nothing is in the way
 			else:
 				result = True
 		return result
@@ -141,14 +143,24 @@ class FiniteStateMachine():
 			# If the obstacle is close and it is near the right side of the car
 			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'LEFT':
 				if self.player.x + self.player.width > self.sortedObstacles[0].x - 30 and self.CheckLeft():
-					self.player.MoveLeft()
+					if self.CheckLeft():
+						self.player.MoveLeft()
+					elif not self.player.CheckLeft() and self.CheckRight():
+						self.player.MoveRight()
+					else:
+						self.player.ReturnStraight()
 				else:
 					self.player.ReturnStraight()
 
 			# If the obstacle is close and it is near the left side of the car
 			elif sortedDistance[0][1] < self.distanceRange and self.WhichWayToMove() == 'RIGHT':
-				if self.player.x < self.sortedObstacles[0].x + self.sortedObstacles[0].width + 30 and self.CheckRight():
-					self.player.MoveRight()
+				if self.player.x < self.sortedObstacles[0].x + self.sortedObstacles[0].width + 30:
+					if self.CheckRight():
+						self.player.MoveRight()
+					elif not self.CheckRight() and self.CheckLeft():
+						self.player.MoveLeft()
+					else:
+						self.player.ReturnStraight()
 				else:
 					self.player.ReturnStraight()
 
