@@ -15,10 +15,6 @@ windowX = 20
 windowY = 50
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (windowX, windowY)
 
-
-
-#pygame.init()
-
 class World():
 	# Initialisation
 	def __init__(self):

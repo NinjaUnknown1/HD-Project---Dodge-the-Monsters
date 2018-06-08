@@ -16,7 +16,7 @@ class Player():
 		self.playerSprite = pygame.sprite.Sprite()
 
 	def MoveLeft(self):
-		if self.x > 130:
+		if self.x > 135:
 			self.x -= self.speed
 			self.direction = 'Left'
 		else:
