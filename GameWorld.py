@@ -15,6 +15,10 @@ windowX = 20
 windowY = 50
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (windowX, windowY)
 
+
+
+#pygame.init()
+
 class World():
 	# Initialisation
 	def __init__(self):
@@ -104,7 +108,7 @@ class World():
 		self.menu.StartGame(self.screen)
 		while self.playing and not self.collision.CheckCollision(self.obList, self.player):
 			# Get the current Level
-			self.level.GetLevel(self.obList)
+			self.level.GetLevel()
 			self.AddObstacle()
 
 			# Checks to see if the user quit

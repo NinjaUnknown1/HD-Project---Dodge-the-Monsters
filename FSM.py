@@ -124,7 +124,7 @@ class FiniteStateMachine():
 					if i == o.index:
 						self.sortedObstacles.append(o)	
 			
-			self.level.GetLevel(self.obList)
+			self.level.GetLevel()
 
 			# Checks to see if the user quit
 			for event in pygame.event.get():

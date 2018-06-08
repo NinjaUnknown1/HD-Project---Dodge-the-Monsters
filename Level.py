@@ -14,7 +14,7 @@ class Level():
 		self.level3 = pygame.image.load("images/Background_Country_Road.png").convert()
 		self.level4 = pygame.image.load("images/Background_Beach_Road.png").convert()
 
-	def GetLevel(self, monList):
+	def GetLevel(self):
 		# The First Level
 		if self.player.score <= 50:
 			background = self.level1
