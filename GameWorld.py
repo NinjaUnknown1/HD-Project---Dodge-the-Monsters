@@ -9,6 +9,8 @@ from Obstacles import Obstacle
 from Text import Text
 from FSM import FiniteStateMachine
 from CollisionChecker import CollisionChecker
+from GameLogic import GameLogic
+from NeuralNetworkRunGame import NNRunGame
 
 # Set a specific location for the window to open
 windowX = 20
@@ -63,7 +65,11 @@ class World():
 			self.fsm.RunGameFSM()
 			self.menu.SetState('MainMenu')
 		elif self.state == 'NeuralNetwork':
-			self.menu.MainMenu(self.screen)
+			self.player = Player('AI')
+			self.nn = NNRunGame(self, self.screen)
+			self.nn.NNGame()
+			self.menu.SetState('MainMenu')
+			#self.menu.MainMenu(self.screen)
 		elif self.state == 'PlayGameHuman':
 			self.player = Player('HUMAN')
 			self.level = Level(self.screen, self.player)
@@ -98,42 +104,24 @@ class World():
 		elif self.level.level == 4 and len(self.obList) == 6:
 			self.obList.append(Obstacle(random.randint(130, 850), (random.randint(50, 300)), 7))
 
-
 	def RunGameHuman(self):
 		self.LoadObstacles()
+		self.game = GameLogic(self, self.screen, self.level, self.text)
 		self.GetSprites()
 		self.player.DrawPlayer(self.screen)
 		for o in self.obList:
 			o.DrawObstacle(self.screen)
 		self.menu.StartGame(self.screen)
 		while self.playing and not self.collision.CheckCollision(self.obList, self.player):
-			# Get the current Level
-			self.level.GetLevel()
-			self.AddObstacle()
-
-			# Checks to see if the user quit
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()	
-
-			# Player Movement and Drawing
+			# Get the player movement
 			self.HandlePlayerMovement()
-			self.player.DrawPlayer(self.screen)
+			# Add other Obstacles
+			self.AddObstacle()
+			# Run the game logic
+			self.game.TheGame(self.obList)
 			
-			# Handles Movement and Drawing of Obstalces	
-			for o in self.obList:
-				o.Move(self.player)
-				o.DrawObstacle(self.screen)	
-
-			self.text.InGameScore(self.player)
 			# Refresh Rate
 			self.clock.tick(120)
-			# Print the FPS to the console
-			print(self.clock.get_fps())
-			
-			# Update the Screen
-			pygame.display.update()
 
 		pygame.time.delay(1000)
 		self.menu.EndGameScreen(self.screen, self.player)
