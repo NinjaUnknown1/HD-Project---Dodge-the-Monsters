@@ -10,7 +10,7 @@ from Text import Text
 from FSM import FiniteStateMachine
 from CollisionChecker import CollisionChecker
 from GameLogic import GameLogic
-from NeuralNetworkRunGame import NNRunGame
+
 
 # Set a specific location for the window to open
 windowX = 20
@@ -64,12 +64,6 @@ class World():
 			self.fsm = FiniteStateMachine(self)
 			self.fsm.RunGameFSM()
 			self.menu.SetState('MainMenu')
-		elif self.state == 'NeuralNetwork':
-			self.player = Player('AI')
-			self.nn = NNRunGame(self, self.screen)
-			self.nn.NNGame()
-			self.menu.SetState('MainMenu')
-			#self.menu.MainMenu(self.screen)
 		elif self.state == 'PlayGameHuman':
 			self.player = Player('HUMAN')
 			self.level = Level(self.screen, self.player)
@@ -118,8 +112,7 @@ class World():
 			# Add other Obstacles
 			self.AddObstacle()
 			# Run the game logic
-			self.game.TheGame(self.obList)
-			
+			self.game.TheGame(self.obList)		
 			# Refresh Rate
 			self.clock.tick(120)
 

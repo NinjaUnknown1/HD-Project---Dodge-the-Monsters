@@ -2,7 +2,6 @@ import pygame
 import sys
 
 from GameWorld import World
-from Player import Player
 
 if __name__ == '__main__':
 	# World Creation

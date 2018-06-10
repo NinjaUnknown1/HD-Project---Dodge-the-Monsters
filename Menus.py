@@ -83,12 +83,10 @@ class Menus():
 
 		# Draw AI Options
 		pygame.draw.rect(screen, COLORS['BLACK'], (200, 300, 600, 100))
-		pygame.draw.rect(screen, COLORS['BLACK'], (200, 450, 600, 100))
 
 		# Check for Hover
 		button.ButtonHover(10, 700, 250, 75, COLORS['GREY'], screen)
 		button.ButtonHover(200, 300, 600, 100, COLORS['GREY'], screen)
-		button.ButtonHover(200, 450, 600, 100, COLORS['GREY'], screen)
 
 		#DrawText
 		self.text.AIText()
@@ -100,9 +98,6 @@ class Menus():
 		if button.ButtonPress(200, 300, 600, 100):
 			pygame.time.delay(210)
 			self.gameState = 'FSM'
-		if button.ButtonPress(200, 450, 600, 100):
-			pygame.time.delay(210)
-			self.gameState = 'NeuralNetwork'
 
 	def EndGameScreen(self, screen, player):
 		screen.fill(COLORS['BLACK'])

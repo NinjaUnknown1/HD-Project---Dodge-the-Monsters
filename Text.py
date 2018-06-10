@@ -81,16 +81,13 @@ class Text():
 		aiHeading = self.mainHeading.render('Select an AI Mode', 1, COLORS['WHITE'])
 		backButton = self.buttonText.render('<-- Back', 1, COLORS['WHITE'])
 		distinction = self.aiButton.render('Finite State Machine', 1, COLORS['WHITE'])
-		hd = self.aiButton.render('Neural Network', 1, COLORS['WHITE'])
 
 		headWidth = aiHeading.get_width()
 		distWidth = distinction.get_width()
-		hdWidth = hd.get_width()
 		
 		self.screen.blit(aiHeading, (self.screenWidth/2 - headWidth/2, 60))
 		self.screen.blit(backButton, (25, 720))
 		self.screen.blit(distinction, (self.screenWidth/2 - distWidth/2, 320))
-		self.screen.blit(hd, (self.screenWidth/2 - hdWidth/2, 470))
 
 	def InGameScore(self, player):
 		cScore = self.scoreText.render('Score : %s' % player.score, 1, COLORS['RED'])
@@ -117,6 +114,10 @@ class Text():
 		goWidth = go.get_width()
 		goHeight = go.get_height()
 		self.screen.blit(go, (self.screenWidth/2 - goWidth/2, self.screenHeight/2 - goHeight/2))
+
+	def FSMQuit(self):
+		quitFSM = self.buttonText.render('Quit', 1, COLORS['WHITE'])
+		self.screen.blit(quitFSM, (30, 735))
 
 	def FinalScore(self, player):
 		m1 = self.dead.render('You Died', 1, COLORS['RED'])

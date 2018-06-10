@@ -14,6 +14,8 @@ from Player import Player
 from Level import Level
 from Obstacles import Obstacle
 from CollisionChecker import CollisionChecker
+from Button import Button
+from Text import Text
 
 class FiniteStateMachine():
 	def __init__(self, world):
@@ -57,7 +59,7 @@ class FiniteStateMachine():
 			if result == False:
 				break
 			# There will be something on the right
-			if (self.player.x + self.player.width) < o.x and (self.player.x + self.player.width) - o.x < 30 and (self.player.x + self.player.width) - o.x > 0 and (self.player.y - o.y < self.distanceRange/2 or self.player.y + 20 < o.y + o.height):
+			if (self.player.x + self.player.width) < o.x and (self.player.x + self.player.width) - o.x < 30 and (self.player.x + self.player.width) - o.x > 0 and (self.player.y - o.y < self.distanceRange/2 or self.player.y + 80 < o.y + o.height):
 				result = False
 			# Nothing is in the way
 			else:
@@ -72,7 +74,7 @@ class FiniteStateMachine():
 			if result == False:
 				break
 			# There will be something on the left
-			if self.player.x > (o.x + o.width) and self.player.x - (o.x + o.width) < 30 and self.player.x - (o.x + o.width) > 0 and (self.player.y - o.y < self.distanceRange/2 or self.player.y + 20 < o.y + o.height):
+			if self.player.x > (o.x + o.width) and self.player.x - (o.x + o.width) < 30 and self.player.x - (o.x + o.width) > 0 and (self.player.y - o.y < self.distanceRange/1.5 or self.player.y + 20 < o.y + o.height):
 				return False
 			# Nothing is in the way
 			else:
@@ -86,6 +88,8 @@ class FiniteStateMachine():
 		screenRight = 900
 		screenBumper = 40
 		file = open('Scores.txt', 'w')
+		quitB = Button()
+		quitT = Text(self.screen)
 		
 		# Initial Game Setup
 		self.GetSprites()
@@ -123,18 +127,25 @@ class FiniteStateMachine():
 				for o in self.obList:
 					if i == o.index:
 						self.sortedObstacles.append(o)	
-			
+
+			# Removes the obstacle from the list if it below a certain point, AI doesn't need to look at it anymore
+			for o in self.obList:
+				if o.y + o.height > self.player.y + 45:
+					self.sortedObstacles.remove(o)
+
+			# Draws the current level
 			self.level.GetLevel()
+			# The quit button
+			pygame.draw.rect(self.screen, (255, 0, 0), (15, 720, 100, 70))
+			quitT.FSMQuit()
+			if quitB.ButtonPress(15, 720, 100, 70):
+				break
 
 			# Checks to see if the user quit
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
 					sys.exit()	
-
-			for o in self.obList:
-				if o.y + o.height > self.player.y + 45:
-					self.sortedObstacles.remove(o)
 
 			###   FSM HERE   ###
 			if self.sortedObstacles	== []:
