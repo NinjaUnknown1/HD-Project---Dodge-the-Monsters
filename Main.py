@@ -1,3 +1,8 @@
+'''
+Main.py
+
+By Caitlyn Sims (100593940)
+'''
 import pygame
 import sys
 

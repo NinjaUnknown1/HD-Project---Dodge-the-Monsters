@@ -1,3 +1,8 @@
+'''
+Menus.py
+
+By Caitlyn Sims (100593940)
+'''
 import pygame
 from Button import Button
 from Text import Text

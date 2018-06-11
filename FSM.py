@@ -1,4 +1,6 @@
 '''
+FSM.py
+
 Distinction Project
 
 This AI runs of a Finite State Machine

@@ -1,6 +1,9 @@
 '''
+GameLogic.py
 
 Game loop of Dodge the Monsters
+
+By Caitlyn Sims (100593940)
 
 '''
 

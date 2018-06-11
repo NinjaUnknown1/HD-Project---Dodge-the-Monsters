@@ -1,3 +1,8 @@
+'''
+Level.py
+
+By Caitlyn Sims (100593940)
+'''
 import pygame
 from Obstacles import Obstacle
 
